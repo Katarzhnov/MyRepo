@@ -45,6 +45,7 @@ $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME_LOWER,PKG_VERSION,PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME_LOWER,false,true,PKG_NAMESPACE_PATH);
 
+
 $modx->log(modX::LOG_LEVEL_INFO,'Created Transport Package and Namespace.');
 
 /* load system settings */
