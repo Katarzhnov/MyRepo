@@ -1,6 +1,6 @@
 Sendex.grid.Newsletters = function(config) {
 	config = config || {};
-    this.sm = new Ext.grid.CheckboxSelectionModel();
+  
 	Ext.applyIf(config,{
 		id: 'sendex-grid-newsletters'
 		,url: Sendex.config.connector_url
@@ -11,7 +11,7 @@ Sendex.grid.Newsletters = function(config) {
 		,autoHeight: true
 		,paging: true
 		,remoteSort: true
-        ,sm: this.sm
+     
 		,columns: [
 			{header: _('id'),dataIndex: 'id',width: 70}
 			,{header: _('name'),dataIndex: 'name',width: 200}
@@ -35,14 +35,9 @@ Ext.extend(Sendex.grid.Newsletters,MODx.grid.Grid,{
 	windows: {}
 
 	,getMenu: function() {
-        var cs = this.getSelectedAsList();
+      
         var m = [];
-        if (cs.split(',').length > 1) {
-            m.push({
-    			text: _('sendex_newsletters_remove')
-    			,handler: this.removeSelected
-    		});
-        } else {
+       
     		m.push({
     			text: _('sendex_newsletter_update')
     			,handler: this.updateNewsletter
@@ -52,8 +47,8 @@ Ext.extend(Sendex.grid.Newsletters,MODx.grid.Grid,{
     			text: _('sendex_newsletter_remove')
     			,handler: this.removeNewsletter
     		});
-        }
-		this.addContextMenuNewsletter(m);
+        
+		this.addContextMenuItem(m);
 	}
 	
 	,createNewsletter: function(btn,e) {
@@ -115,17 +110,7 @@ Ext.extend(Sendex.grid.Newsletters,MODx.grid.Grid,{
 		});
 	}
 
-    ,getSelectedAsList: function() {
-        var sels = this.getSelectionModel().getSelections();
-        if (sels.length <= 0) return false;
-
-        var cs = '';
-        for (var i=0;i<sels.length;i++) {
-            cs += ','+sels[i].data.id;
-        }
-        cs = cs.substr(1);
-        return cs;
-    }
+    
 
     ,removeSelected: function(act,btn,e) {
         var cs = this.getSelectedAsList();
