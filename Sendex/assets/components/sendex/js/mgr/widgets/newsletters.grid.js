@@ -1,11 +1,11 @@
-Sendex.grid.Items = function(config) {
+Sendex.grid.Newsletters = function(config) {
 	config = config || {};
     this.sm = new Ext.grid.CheckboxSelectionModel();
 	Ext.applyIf(config,{
-		id: 'sendex-grid-items'
+		id: 'sendex-grid-newsletters'
 		,url: Sendex.config.connector_url
 		,baseParams: {
-			action: 'mgr/item/getlist'
+			action: 'mgr/newsletter/getlist'
 		}
 		,fields: ['id','name','description']
 		,autoHeight: true
@@ -18,20 +18,20 @@ Sendex.grid.Items = function(config) {
 			,{header: _('description'),dataIndex: 'description',width: 250}
 		]
 		,tbar: [{
-			text: _('sendex_item_create')
-			,handler: this.createItem
+			text: _('sendex_btn_create')
+			,handler: this.createNewsletter
 			,scope: this
 		}]
 		,listeners: {
 			rowDblClick: function(grid, rowIndex, e) {
 				var row = grid.store.getAt(rowIndex);
-				this.updateItem(grid, e, row);
+				this.updateNewsletter(grid, e, row);
 			}
 		}
 	});
-	Sendex.grid.Items.superclass.constructor.call(this,config);
+	Sendex.grid.Newsletters.superclass.constructor.call(this,config);
 };
-Ext.extend(Sendex.grid.Items,MODx.grid.Grid,{
+Ext.extend(Sendex.grid.Newsletters,MODx.grid.Grid,{
 	windows: {}
 
 	,getMenu: function() {
@@ -39,74 +39,74 @@ Ext.extend(Sendex.grid.Items,MODx.grid.Grid,{
         var m = [];
         if (cs.split(',').length > 1) {
             m.push({
-    			text: _('sendex_items_remove')
+    			text: _('sendex_newsletters_remove')
     			,handler: this.removeSelected
     		});
         } else {
     		m.push({
-    			text: _('sendex_item_update')
-    			,handler: this.updateItem
+    			text: _('sendex_newsletter_update')
+    			,handler: this.updateNewsletter
     		});
     		m.push('-');
     		m.push({
-    			text: _('sendex_item_remove')
-    			,handler: this.removeItem
+    			text: _('sendex_newsletter_remove')
+    			,handler: this.removeNewsletter
     		});
         }
-		this.addContextMenuItem(m);
+		this.addContextMenuNewsletter(m);
 	}
 	
-	,createItem: function(btn,e) {
-		if (!this.windows.createItem) {
-			this.windows.createItem = MODx.load({
-				xtype: 'sendex-window-item-create'
+	,createNewsletter: function(btn,e) {
+		if (!this.windows.createNewsletter) {
+			this.windows.createNewsletter = MODx.load({
+				xtype: 'sendex-window-newsletter-create'
 				,listeners: {
 					'success': {fn:function() { this.refresh(); },scope:this}
 				}
 			});
 		}
-		this.windows.createItem.fp.getForm().reset();
-		this.windows.createItem.show(e.target);
+		this.windows.createNewsletter.fp.getForm().reset();
+		this.windows.createNewsletter.show(e.target);
 	}
 
-	,updateItem: function(btn,e,row) {
+	,updateNewsletter: function(btn,e,row) {
 		if (typeof(row) != 'undefined') {this.menu.record = row.data;}
 		var id = this.menu.record.id;
 
 		MODx.Ajax.request({
 			url: Sendex.config.connector_url
 			,params: {
-				action: 'mgr/item/get'
+				action: 'mgr/newsletter/get'
 				,id: id
 			}
 			,listeners: {
 				success: {fn:function(r) {
-					if (!this.windows.updateItem) {
-						this.windows.updateItem = MODx.load({
-							xtype: 'sendex-window-item-update'
+					if (!this.windows.updateNewsletter) {
+						this.windows.updateNewsletter = MODx.load({
+							xtype: 'sendex-window-newsletter-update'
 							,record: r
 							,listeners: {
 								'success': {fn:function() { this.refresh(); },scope:this}
 							}
 						});
 					}
-					this.windows.updateItem.fp.getForm().reset();
-					this.windows.updateItem.fp.getForm().setValues(r.object);
-					this.windows.updateItem.show(e.target);
+					this.windows.updateNewsletter.fp.getForm().reset();
+					this.windows.updateNewsletter.fp.getForm().setValues(r.object);
+					this.windows.updateNewsletter.show(e.target);
 				},scope:this}
 			}
 		});
 	}
 
-	,removeItem: function(btn,e) {
+	,removeNewsletter: function(btn,e) {
 		if (!this.menu.record) return false;
 		
 		MODx.msg.confirm({
-			title: _('sendex_item_remove')
-			,text: _('sendex_item_remove_confirm')
+			title: _('sendex_newsletter_remove')
+			,text: _('sendex_newsletter_remove_confirm')
 			,url: this.config.url
 			,params: {
-				action: 'mgr/item/remove'
+				action: 'mgr/newsletter/remove'
 				,id: this.menu.record.id
 			}
 			,listeners: {
@@ -132,12 +132,12 @@ Ext.extend(Sendex.grid.Items,MODx.grid.Grid,{
         if (cs === false) return false;
 
         MODx.msg.confirm({
-			title: _('sendex_items_remove')
-			,text: _('sendex_items_remove_confirm')
+			title: _('sendex_newsletters_remove')
+			,text: _('sendex_newsletters_remove_confirm')
 			,url: this.config.url
 			,params: {
-                action: 'mgr/items/remove'
-                ,items: cs
+                action: 'mgr/newsletters/remove'
+                ,newsletters: cs
             }
             ,listeners: {
                 'success': {fn:function(r) {
@@ -151,43 +151,43 @@ Ext.extend(Sendex.grid.Items,MODx.grid.Grid,{
         return true;
     }
 });
-Ext.reg('sendex-grid-items',Sendex.grid.Items);
+Ext.reg('sendex-grid-newsletters',Sendex.grid.Newsletters);
 
 
 
 
-Sendex.window.CreateItem = function(config) {
+Sendex.window.CreateNewsletter = function(config) {
 	config = config || {};
-	this.ident = config.ident || 'mecitem'+Ext.id();
+	this.ident = config.ident || 'mecnewsletter'+Ext.id();
 	Ext.applyIf(config,{
-		title: _('sendex_item_create')
+		title: _('sendex_newsletter_create')
 		,id: this.ident
 		,height: 200
 		,width: 475
 		,url: Sendex.config.connector_url
-		,action: 'mgr/item/create'
+		,action: 'mgr/newsletter/create'
 		,fields: [
 			{xtype: 'textfield',fieldLabel: _('name'),name: 'name',id: 'sendex-'+this.ident+'-name',anchor: '99%'}
 			,{xtype: 'textarea',fieldLabel: _('description'),name: 'description',id: 'sendex-'+this.ident+'-description',height: 150,anchor: '99%'}
 		]
 		,keys: [{key: Ext.EventObject.ENTER,shift: true,fn: function() {this.submit() },scope: this}]
 	});
-	Sendex.window.CreateItem.superclass.constructor.call(this,config);
+	Sendex.window.CreateNewsletter.superclass.constructor.call(this,config);
 };
-Ext.extend(Sendex.window.CreateItem,MODx.Window);
-Ext.reg('sendex-window-item-create',Sendex.window.CreateItem);
+Ext.extend(Sendex.window.CreateNewsletter,MODx.Window);
+Ext.reg('sendex-window-newsletter-create',Sendex.window.CreateNewsletter);
 
 
-Sendex.window.UpdateItem = function(config) {
+Sendex.window.UpdateNewsletter = function(config) {
 	config = config || {};
-	this.ident = config.ident || 'meuitem'+Ext.id();
+	this.ident = config.ident || 'meunewsletter'+Ext.id();
 	Ext.applyIf(config,{
-		title: _('sendex_item_update')
+		title: _('sendex_newsletter_update')
 		,id: this.ident
 		,height: 200
 		,width: 475
 		,url: Sendex.config.connector_url
-		,action: 'mgr/item/update'
+		,action: 'mgr/newsletter/update'
 		,fields: [
 			{xtype: 'hidden',name: 'id',id: 'sendex-'+this.ident+'-id'}
 			,{xtype: 'textfield',fieldLabel: _('name'),name: 'name',id: 'sendex-'+this.ident+'-name',anchor: '99%'}
@@ -195,7 +195,7 @@ Sendex.window.UpdateItem = function(config) {
 		]
 		,keys: [{key: Ext.EventObject.ENTER,shift: true,fn: function() {this.submit() },scope: this}]
 	});
-	Sendex.window.UpdateItem.superclass.constructor.call(this,config);
+	Sendex.window.UpdateNewsletter.superclass.constructor.call(this,config);
 };
-Ext.extend(Sendex.window.UpdateItem,MODx.Window);
-Ext.reg('sendex-window-item-update',Sendex.window.UpdateItem);
+Ext.extend(Sendex.window.UpdateNewsletter,MODx.Window);
+Ext.reg('sendex-window-newsletter-update',Sendex.window.UpdateNewsletter);
